@@ -251,9 +251,10 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 		stopPlayback();
 	}
 
-	public MjpegView(Context context) {
+	public MjpegView(Context context, ImjpegViewListener listener) {
 		super(context);
 		this.context = context;
+		this.listener = listener;
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
