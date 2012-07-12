@@ -17,6 +17,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -54,7 +55,7 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 		private SurfaceHolder mSurfaceHolder;
 		private int frameCounter = 0;
 		private long start;
-		private Bitmap ovl;
+		private Bitmap ovl, bitmap;
 
 		public MjpegViewThread(SurfaceHolder surfaceHolder, Context context) {
 			mSurfaceHolder = surfaceHolder;
@@ -113,7 +114,7 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 
 			PorterDuffXfermode mode = new PorterDuffXfermode(
 					PorterDuff.Mode.DST_OVER);
-			Bitmap bm = null;
+			bitmap = null;
 			int width;
 			int height;
 			Rect destRect;
@@ -132,7 +133,7 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 				if (surfaceDone) {
 					try {
 						try {
-							bm = mIn.readMjpegFrame();
+							bitmap = mIn.readMjpegFrame();
 							sucess = true;
 						} catch (IOException e) {
 							sucess = false;
@@ -141,9 +142,9 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 						c = mSurfaceHolder.lockCanvas();
 						Log.d(TAG, "Lock");
 						synchronized (mSurfaceHolder) {
-							destRect = destRect(bm.getWidth(), bm.getHeight());
+							destRect = destRect(bitmap.getWidth(), bitmap.getHeight());
 							c.drawColor(overlayBackgroundColor);
-							c.drawBitmap(bm, null, destRect, p);
+							c.drawBitmap(bitmap, null, destRect, p);
 							if (showFps) {
 								p.setXfermode(mode);
 								if (ovl != null) {
@@ -195,6 +196,10 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 			listener.error();
 			mRun = false;
 		}
+		
+		public Bitmap getBitmap() {
+			return bitmap;
+		}
 	}
 
 	private void init(Context context) {
@@ -207,7 +212,7 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 		overlayPaint.setTextSize(12);
 		overlayPaint.setTypeface(Typeface.DEFAULT);
 		overlayTextColor = Color.WHITE;
-		overlayBackgroundColor = Color.rgb(251, 212, 72);
+		overlayBackgroundColor = Color.rgb(0, 0, 0);
 		ovlPos = MjpegView.POSITION_LOWER_RIGHT;
 	}
 
@@ -308,6 +313,25 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 
 	public void destroy() {
 		stopPlayback();
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		boolean executed = false;
+		int action = event.getAction();
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			Log.d(TAG, "Touched!!!");
+			Bitmap bm = thread.getBitmap();
+			if (listener != null)
+				listener.hasBitmap(bm);
+			executed = true;
+			break;
+
+		default:
+			break;
+		}
+		return executed;
 	}
 
 }
