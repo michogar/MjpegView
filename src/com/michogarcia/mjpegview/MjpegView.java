@@ -208,13 +208,6 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 		holder.addCallback(this);
 		thread = new MjpegViewThread(holder, context);
 		setFocusable(true);
-		overlayPaint = new Paint();
-		overlayPaint.setTextAlign(Paint.Align.LEFT);
-		overlayPaint.setTextSize(12);
-		overlayPaint.setTypeface(Typeface.DEFAULT);
-		overlayTextColor = Color.WHITE;
-		overlayBackgroundColor = Color.rgb(0, 0, 0);
-		ovlPos = MjpegView.POSITION_LOWER_RIGHT;
 	}
 
 	public void startPlayback() {
