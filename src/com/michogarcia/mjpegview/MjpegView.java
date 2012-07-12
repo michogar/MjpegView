@@ -142,7 +142,8 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 						c = mSurfaceHolder.lockCanvas();
 						Log.d(TAG, "Lock");
 						synchronized (mSurfaceHolder) {
-							destRect = destRect(bitmap.getWidth(), bitmap.getHeight());
+							destRect = destRect(bitmap.getWidth(),
+									bitmap.getHeight());
 							c.drawColor(overlayBackgroundColor);
 							c.drawBitmap(bitmap, null, destRect, p);
 							if (showFps) {
@@ -196,7 +197,7 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 			listener.error();
 			mRun = false;
 		}
-		
+
 		public Bitmap getBitmap() {
 			return bitmap;
 		}
@@ -234,9 +235,11 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 	}
 
-	public MjpegView(Context context, AttributeSet attrs) {
+	public MjpegView(Context context, AttributeSet attrs,
+			ImjpegViewListener listener) {
 		super(context, attrs);
 		this.context = context;
+		this.listener = listener;
 	}
 
 	public void surfaceChanged(SurfaceHolder holder, int f, int w, int h) {
@@ -307,10 +310,6 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 		return listener;
 	}
 
-	public void setListener(ImjpegViewListener listener) {
-		this.listener = listener;
-	}
-
 	public void destroy() {
 		stopPlayback();
 	}
@@ -323,8 +322,7 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 		case MotionEvent.ACTION_DOWN:
 			Log.d(TAG, "Touched!!!");
 			Bitmap bm = thread.getBitmap();
-			if (listener != null)
-				listener.hasBitmap(bm);
+			listener.hasBitmap(bm);
 			executed = true;
 			break;
 
