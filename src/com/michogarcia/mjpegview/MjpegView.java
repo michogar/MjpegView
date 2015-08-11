@@ -212,6 +212,9 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 		setFocusable(true);
 	}
 
+	public MjpegView(Context context, AttributeSet attrs) { super(context, attrs); init(context); }
+
+
 	public void startPlayback() {
 		mRun = true;
 		init(context);
