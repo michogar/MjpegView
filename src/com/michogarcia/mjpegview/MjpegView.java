@@ -172,7 +172,8 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 						}
 					}
 					if (sucess) {
-						listener.sucess();
+						if(listener!=null)
+							listener.sucess();
 					} else {
 						onError();
 					}
@@ -194,7 +195,8 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 
 		private void onError() {
 			stopPlayback();
-			listener.error();
+			if(listener!=null)
+				listener.error();
 			mRun = false;
 		}
 
@@ -209,6 +211,9 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 		thread = new MjpegViewThread(holder, context);
 		setFocusable(true);
 	}
+
+	public MjpegView(Context context, AttributeSet attrs) { super(context, attrs); init(context); }
+
 
 	public void startPlayback() {
 		mRun = true;
@@ -260,7 +265,8 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 
 	public void setSource(String URL) {
 		if (URL == null) {
-			listener.error();
+			if(listener!=null)
+				listener.error();
 		} else {
 			// mIn = source;
 			url = URL;
@@ -316,7 +322,8 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 		case MotionEvent.ACTION_DOWN:
 			Log.d(TAG, "Touched!!!");
 			Bitmap bm = thread.getBitmap();
-			listener.hasBitmap(bm);
+			if(listener!=null)
+				listener.hasBitmap(bm);
 			executed = true;
 			break;
 
